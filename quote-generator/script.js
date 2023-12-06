@@ -7,22 +7,22 @@ const loader = document.getElementById('loader');
 
 let apiQuotes = [];
 
-// Show loading
-const loading = () => {
+const showLoadingSpinner = () => {
     loader.hidden = false;
     quoteContainer.hidden = true;
 }
 
-// Hide loading
-const complete = () => {
-    loader.hidden = true;
-    quoteContainer.hidden = false;
+const hideLoadingSpinner = () => {
+    if (!loader.hidden) {
+        loader.hidden = true;
+        quoteContainer.hidden = false;
+    }
 }
 
 
 // Show new quote
 const newQuote = () => {
-    loading();
+    showLoadingSpinner();
     const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
     
     // Check quote length to determine styling
@@ -32,12 +32,12 @@ const newQuote = () => {
 
     // Set Quote, Hide loader
     quoteText.textContent = quote.text;
-    complete();
+    hideLoadingSpinner();
 }
 
 // Get Quotes From API
 const getQuotes = async () => {
-    loading();
+    showLoadingSpinner();
     const apiUrl = 'https://jacintodesign.github.io/quotes-api/data/quotes.json';
 
     try {
@@ -46,7 +46,8 @@ const getQuotes = async () => {
         newQuote();
 
     } catch (error) {
-        
+        showLoadingSpinner();
+        getQuotes();
     }
 }
 
