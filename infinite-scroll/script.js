@@ -10,20 +10,31 @@ const count = 2;
 
 const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API_KEY}&count=${count}`;
 
+// Helper function for creating attributes
+const setAttributes = (element, attributes) => {
+    for (const [key, value] of Object.entries(attributes)) {
+        element.setAttribute(key, value);
+    }
+}
+
 // Create elements for links & photos, then add to DOM
 const displayPhotos = () => {
     // Run function for each object in photosArray
     photosArray.forEach((photo) => {
         // Create <a> to link to Unsplash image
         const item = document.createElement('a');
-        item.setAttribute('href', photo.links.html);
-        item.setAttribute('target', '_blank');  // Open image in new tab
+        setAttributes(item, {
+            'href': photo.links.html,
+            'target': '_blank'  // Open link in new tab
+        });
 
         // Create <img> for photo
         const img = document.createElement('img');
-        img.setAttribute('src', photo.urls.regular);
-        img.setAttribute('alt', photo.alt_description);
-        img.setAttribute('title', photo.alt_description);
+        setAttributes(img, {
+            'src': photo.urls.regular,
+            'alt': photo.alt_description,
+            'title': photo.alt_description
+        });
 
         // Put <img> inside <a>, then put both inside <div #image-container>
         item.appendChild(img);
