@@ -1,25 +1,29 @@
 import { UNSPLASH_API_KEY } from './env.js';
 
+// Set variables for application
 const imageContainer = document.getElementById('image-container');
 const loader = document.getElementById('loader');
 
-let ready = false;
-let imagesLoaded = 0;
+let imgsFinishedLoading = false;
+let numImagesLoaded = 0;
 let totalImages = 0;
-
 let photosArray = [];
 
-// Unsplash API
-const count = 20;
+// Initalise count to low number for slow internet
+let initialImgCount = 5;
+let isFirstPageLoad = true;
+let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API_KEY}&count=${initialImgCount}`;
 
-const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API_KEY}&count=${count}`;
+
+const updateAPIUrlWithNewCount = (count) => {
+    apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API_KEY}&count=${count}`;
+}
 
 
-// Check if all images have loaded
-const imageLoaded = () => {
-    imagesLoaded++;
-    if (imagesLoaded === totalImages) {
-        ready = true;
+const onImageLoad = () => {
+    numImagesLoaded++;
+    if (numImagesLoaded === totalImages) {
+        imgsFinishedLoading = true;
         loader.hidden = true;
     }
 }
@@ -33,7 +37,7 @@ const setAttributes = (element, attributes) => {
 
 // Create elements for links & photos, then add to DOM
 const displayPhotos = () => {
-    imagesLoaded = 0;
+    numImagesLoaded = 0;
     totalImages = photosArray.length;
 
     // Run function for each object in photosArray
@@ -53,12 +57,12 @@ const displayPhotos = () => {
             'title': photo.alt_description
         });
 
-        // Check when each image has finished loading
-        img.addEventListener('load', imageLoaded);
-
         // Put <img> inside <a>, then put both inside <div #image-container>
         item.appendChild(img);
         imageContainer.appendChild(item);
+
+        // Check when each image has finished loading
+        img.addEventListener('load', onImageLoad);
     });
 }
 
@@ -69,6 +73,11 @@ const getPhotos = async () => {
         photosArray = await response.json();
         displayPhotos();
 
+        if (isFirstPageLoad) {
+            updateAPIUrlWithNewCount(30);
+            isFirstPageLoad = false;
+        }
+
     } catch (error) {
         // Catch errors here ...
     }
@@ -76,10 +85,10 @@ const getPhotos = async () => {
 
 // Check if scrolling near bottom of page, and images are loaded
 window.addEventListener('scroll', () => {
-    if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 1000 && ready) {
-        if (ready) {
+    if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 1000 && imgsFinishedLoading) {
+        if (imgsFinishedLoading) {
             // Load more images
-            ready = false;
+            imgsFinishedLoading = false;
             getPhotos();
         }
     }
