@@ -10,7 +10,7 @@ let totalImages = 0;
 let photosArray = [];
 
 // Initalise count to low number for slow internet
-let initialImgCount = 5;
+let initialImgCount = 6;
 let isFirstPageLoad = true;
 let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API_KEY}&count=${initialImgCount}`;
 
