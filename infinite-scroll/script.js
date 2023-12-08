@@ -19,7 +19,8 @@ const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${UNSPLASH_API
 const imageLoaded = () => {
     imagesLoaded++;
     if (imagesLoaded === totalImages) {
-        ready = true;        
+        ready = true;
+        loader.hidden = true;
     }
 }
 
